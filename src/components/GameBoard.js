@@ -16,8 +16,25 @@ class GameBoard extends Component {
     }
 
     componentDidMount() {
+        const cardInts = [];
+        let cardSets = [];
+        let cardSetRandom = [];
+
+        for (let index = 0; index < 5; index++) {
+            cardInts.push(index + 1);
+        }
+
+        cardSets = [...cardInts, ...cardInts];
+
+        for (let i = cardSets.length - 1; i > 0; i--) {
+            const randomInt = Math.floor(Math.random() * i);
+            const tempCardSet = cardSets[i];
+            cardSets[i] = cardSets[randomInt];
+            cardSets[randomInt] = tempCardSet;
+        }
+
         this.setState({
-            cardNumbers: [1, 2, 1, 2, 3, 4, 5, 3, 5, 4],
+            cardNumbers: [...cardSets],
         });
     }
 
