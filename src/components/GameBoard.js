@@ -16,7 +16,7 @@ class GameBoard extends Component {
 
     componentDidMount() {
         this.setState({
-            cardNumbers: [1, 2, 1, 2],
+            cardNumbers: [1, 2, 1, 2, 3, 4, 5, 3, 5, 4],
         });
     }
 
@@ -81,7 +81,7 @@ class GameBoard extends Component {
 
         return (
             <div className="board">
-                {cards}
+                <div className="cards">{cards}</div>
                 <div className="confirmation">{confirmation}</div>
             </div>
         );
