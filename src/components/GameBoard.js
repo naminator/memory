@@ -10,6 +10,7 @@ class GameBoard extends Component {
             cardNumbers: [],
             selectedCards: [],
             selectedCardIndex: [],
+            matchedCardIndex: [],
             hasMatch: false,
         };
     }
@@ -24,11 +25,21 @@ class GameBoard extends Component {
         this.setState({
             selectedCards: [],
             selectedCardIndex: [],
+            matchedCardIndex: [],
         });
     }
 
-    handleCardClick = (cardNumber, cardIndex) => {
-        const { selectedCards, selectedCardIndex } = this.state;
+    handleCardClick = (cardNumber, cardIndex, matchedCardClicked) => {
+        const {
+            selectedCards,
+            selectedCardIndex,
+            matchedCardIndex,
+        } = this.state;
+
+        if (matchedCardClicked) {
+            return;
+        }
+
         const shouldSetSelectedCards =
             selectedCards.length < 2 && selectedCardIndex.length < 2;
 
@@ -37,13 +48,19 @@ class GameBoard extends Component {
                 selectedCards: [...prevState.selectedCards, cardNumber],
                 selectedCardIndex: [...prevState.selectedCardIndex, cardIndex],
             }),
-            () =>
-                this.setState({
-                    hasMatch:
-                        this.state.selectedCards.length >= 2 &&
-                        this.state.selectedCards[0] ===
-                            this.state.selectedCards[1],
-                })
+            () => {
+                if (
+                    this.state.selectedCards[0] === this.state.selectedCards[1]
+                ) {
+                    this.setState({
+                        matchedCardIndex: [
+                            ...matchedCardIndex,
+                            ...this.state.selectedCardIndex,
+                        ],
+                        hasMatch: this.state.selectedCards.length >= 2,
+                    });
+                }
+            }
         );
 
         if (!shouldSetSelectedCards) {
@@ -55,11 +72,19 @@ class GameBoard extends Component {
     };
 
     render() {
-        const { cardNumbers, selectedCardIndex, hasMatch } = this.state;
+        const {
+            cardNumbers,
+            selectedCardIndex,
+            matchedCardIndex,
+            hasMatch,
+        } = this.state;
         const cards = cardNumbers.map((cardNumber, cardIndex) => {
-            const shouldShowSelected = selectedCardIndex.includes(cardIndex);
+            const showSelected = selectedCardIndex.includes(cardIndex);
+            const showMatched = matchedCardIndex.includes(cardIndex);
+            const showCard = showSelected || showMatched;
             const cardClasses = className('card', {
-                'card--selected': shouldShowSelected,
+                'card--selected': showSelected,
+                'card--matched': showMatched,
             });
 
             return (
@@ -69,10 +94,11 @@ class GameBoard extends Component {
                     onClick={this.handleCardClick.bind(
                         this,
                         cardNumber,
-                        cardIndex
+                        cardIndex,
+                        showMatched
                     )}
                 >
-                    {shouldShowSelected && cardNumber}
+                    {showCard && cardNumber}
                 </div>
             );
         });
