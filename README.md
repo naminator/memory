@@ -1,4 +1,6 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Memory Card Game
+
+Fun card game built using React.
 
 ## Available Scripts
 
