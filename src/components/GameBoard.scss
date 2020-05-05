@@ -1,0 +1,26 @@
+// colors
+$peach: #f8b195;
+$sunset-pink: #f67280;
+$sunset-pink-dark: #c06c84;
+$purple: #6c5b7b;
+$blue: #355c7d;
+
+.board {
+    width: 800px;
+    display: flex;
+}
+
+.card {
+    display: flex;
+    border: 1px solid $blue;
+    width: 200px;
+    height: 200px;
+    margin: 10px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.card--selected {
+    border: 1px solid $sunset-pink;
+}
