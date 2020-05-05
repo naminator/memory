@@ -57,8 +57,9 @@ class GameBoard extends Component {
     render() {
         const { cardNumbers, selectedCardIndex, hasMatch } = this.state;
         const cards = cardNumbers.map((cardNumber, cardIndex) => {
+            const shouldShowSelected = selectedCardIndex.includes(cardIndex);
             const cardClasses = className('card', {
-                'card--selected': selectedCardIndex.includes(cardIndex),
+                'card--selected': shouldShowSelected,
             });
 
             return (
@@ -71,7 +72,7 @@ class GameBoard extends Component {
                         cardIndex
                     )}
                 >
-                    {cardNumber}
+                    {shouldShowSelected && cardNumber}
                 </div>
             );
         });
@@ -82,7 +83,7 @@ class GameBoard extends Component {
         return (
             <div className="board">
                 <div className="cards">{cards}</div>
-                <div className="confirmation">{confirmation}</div>
+                <p className="confirmation">{confirmation}</p>
             </div>
         );
     }
