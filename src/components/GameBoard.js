@@ -12,13 +12,13 @@ class GameBoard extends Component {
             selectedCardIndex: [],
             matchedCardIndex: [],
             hasMatch: false,
+            gameOver: false,
         };
     }
 
     componentDidMount() {
         const cardInts = [];
         let cardSets = [];
-        let cardSetRandom = [];
 
         for (let index = 0; index < 5; index++) {
             cardInts.push(index + 1);
@@ -46,19 +46,22 @@ class GameBoard extends Component {
         });
     }
 
+    handleSelectedCardReset(timeout = 1000) {
+        setTimeout(() => {
+            this.setState({
+                selectedCards: [],
+                selectedCardIndex: [],
+                hasMatch: false,
+            });
+        }, timeout);
+    }
+
     handleCardClick = (cardNumber, cardIndex, matchedCardClicked) => {
-        const {
-            selectedCards,
-            selectedCardIndex,
-            matchedCardIndex,
-        } = this.state;
+        const { matchedCardIndex } = this.state;
 
         if (matchedCardClicked) {
             return;
         }
-
-        const shouldSetSelectedCards =
-            selectedCards.length < 2 && selectedCardIndex.length < 2;
 
         this.setState(
             (prevState) => ({
@@ -69,23 +72,31 @@ class GameBoard extends Component {
                 if (
                     this.state.selectedCards[0] === this.state.selectedCards[1]
                 ) {
-                    this.setState({
-                        matchedCardIndex: [
-                            ...matchedCardIndex,
-                            ...this.state.selectedCardIndex,
-                        ],
-                        hasMatch: this.state.selectedCards.length >= 2,
-                    });
+                    this.setState(
+                        {
+                            matchedCardIndex: [
+                                ...matchedCardIndex,
+                                ...this.state.selectedCardIndex,
+                            ],
+                            hasMatch: this.state.selectedCards.length === 2,
+                        },
+                        () => {
+                            if (
+                                this.state.matchedCardIndex.length ===
+                                this.state.cardNumbers.length
+                            ) {
+                                this.setState({
+                                    gameOver: true,
+                                });
+                            }
+                        }
+                    );
+                    this.handleSelectedCardReset();
+                } else if (this.state.selectedCards.length === 2) {
+                    this.handleSelectedCardReset();
                 }
             }
         );
-
-        if (!shouldSetSelectedCards) {
-            this.setState({
-                selectedCards: [],
-                selectedCardIndex: [],
-            });
-        }
     };
 
     render() {
@@ -94,6 +105,7 @@ class GameBoard extends Component {
             selectedCardIndex,
             matchedCardIndex,
             hasMatch,
+            gameOver,
         } = this.state;
         const cards = cardNumbers.map((cardNumber, cardIndex) => {
             const showSelected = selectedCardIndex.includes(cardIndex);
@@ -119,14 +131,16 @@ class GameBoard extends Component {
                 </div>
             );
         });
-        const confirmation = hasMatch
-            ? 'They match!'
-            : 'Not a match, try again.';
+        let confirmationText = hasMatch ? 'They match!' : 'Find a matching set';
+
+        if (gameOver) {
+            confirmationText = 'You Win!!!';
+        }
 
         return (
             <div className="board">
                 <div className="cards">{cards}</div>
-                <p className="confirmation">{confirmation}</p>
+                <p className="confirmation">{confirmationText}</p>
             </div>
         );
     }
